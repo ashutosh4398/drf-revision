@@ -1,0 +1,31 @@
+1. model_to_dict => from django.forms.model 
+    PAIN POINT: some keys in dictionary returned are not json serializable
+    eg: {'id': 1, 'title': 'One Plus fitbit', 'price': Decimal('1000.00')}
+    Decimal
+
+    DOES NOT RETURN CUSTOM PROPERTY ON MODELS
+
+    THUS WE PREFER TO USE SERIALIZER DRF
+2. HttpResponse => returns string with default as html text
+we can although change the content type in resposne headers as:
+    return HttpResponse("hello there", headers={"content-type": "application/json"})
+
+3. SerializerMethodField => read only field 
+4. for normal django view, csrf cookie needs to be set
+    however for drf view, csrf cookie is not mandatory
+
+5. we can use serializer for validating input data to api in request payload
+
+6. you can leverage raise_exception parameter of serializer.is_valid() method to directly return serializer.errors
+
+7. By default, the lookup field is "pk", if you provide some other lookup field, please mention it in
+    url parameter as well and vice versa
+
+8. generics.ListCreateAPIView = generics.CreateAPIView + ListAPIView
+
+9. Generic Views are easy to read and understand
+    functional views on other hand are flexible but it becomes tedious to understand the logic
+    behind it
+
+10: GenericAPIView => base class for handling generic views like CreateAPIView, etc.
+    we can combine it with mixins for more advantage
