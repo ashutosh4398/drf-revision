@@ -29,3 +29,47 @@ we can although change the content type in resposne headers as:
 
 10: GenericAPIView => base class for handling generic views like CreateAPIView, etc.
     we can combine it with mixins for more advantage
+
+11. Permissions [user and group]
+    -> we can assign individual permissions to user for performing CRUD operation on each model
+    -> We can also group permissions and assign them to different users, who share same permissions
+
+    -> It is important to note that DjangoModelPermissions supports on POST, PUT, PATCH and DELETE methods by default
+    -> It allows GET as it is no-risky permissions
+    -> We can change this behaviour by creating Custom Permission
+
+12. Token authentication:
+    headers={
+        "Authorization": f'Token {authentication_response["token"]}'
+    }
+
+    We can also change the keyword ie "Token" by inherting TokenAuthentication
+    and passing it in authentication_classes
+
+    ```
+    from rest_framework.authentication import TokenAuthentication as BaseTokenAuth
+
+    class TokenAuthentication(BaseTokenAuth):
+        keyword = "Bearer" 
+    ```
+
+13. We can provide default permissions and authentications on all apis and overwrite them in individual views
+
+    ```
+        REST_FRAMEWORK = {
+        'DEFAULT_AUTHENTICATION_CLASSES': [
+            'rest_framework.authentication.SessionAuthentication',
+            'api.authentication.TokenAuthentication'
+        ],
+        'DEFAULT_PERMISSION_CLASSES': [
+            'rest_framework.permissions.IsAuthenticatedOrReadOnly'
+        ]
+    }
+
+    # NOTE: WE HAVE TO PROVIDE CLASS PATH IN STRING
+
+    ```
+
+14. You can create a normal class with permission_classes and authentication_classes attributes and inhert
+other api views from this class to avoid duplicate code
+
