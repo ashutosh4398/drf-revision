@@ -95,6 +95,13 @@ class ProductMixinView(
     # authentication_classes = [authentication.SessionAuthentication, TokenAuthentication]
     # permission_classes = [permissions.IsAuthenticated, isStaffEditiorPermission]
 
+    def get_queryset(self, *args, **kwargs):
+        request = self.request
+        qs = super().get_queryset(*args, **kwargs)
+        print(request.user)
+        # we can use request.user directly because we are sure that the request is authenticated.
+        return qs.filter(user=request.user)
+
     def get(self, request, *args, **kwargs):
         if kwargs.get("id"):
             return super().retrieve(request, *args, **kwargs)
@@ -113,6 +120,7 @@ class ProductMixinView(
         email = serializer.validated_data.pop("email", "")
         if email:
             print("SEnding eMaIl")
-        return super().perform_create(serializer)
+        serializer.save(user=self.request.user)
     
+
 

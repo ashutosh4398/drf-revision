@@ -5,6 +5,12 @@ from django.forms.models import model_to_dict
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from products.serializers import ProductSerializer
+from rest_framework import mixins, generics
+from .permission_mixin import ProdcutEditorPermissionMixin
+from django.contrib.auth import get_user_model
+from .serializers import UserPublicDataSerializer
+
+User = get_user_model()
 
 # NORMAL DJANGO VIEW
 # def api_home(request, *args, **kwargs):
@@ -40,3 +46,10 @@ def api_home(request, *args, **kwargs):
     instance = serializer.save()
     print(instance)
     return Response(serializer.data)
+
+class UserDetailView(
+        ProdcutEditorPermissionMixin, 
+        generics.ListAPIView
+    ):
+    queryset = User.objects.all()
+    serializer_class = UserPublicDataSerializer  

@@ -92,3 +92,80 @@ other api views from this class to avoid duplicate code
     And then override create() or update() method of serializer depending upon requirement
     we rarely touch perform_create or perform_update methods of views since request instance is 
     not directly accessible over there
+
+21. Validating serializer data
+
+    -> applicable only for write_only data
+    
+    -> defining method name as validate_<fieldname>
+    ```
+    def validate_title(self, value):
+        qs = Product.objects.filter(title__exact=value)
+        if qs.exists():
+            raise serializers.ValidationError(f"{value} is alrady a product name")
+        return value
+    ```
+
+    -> We can also provide inline validator
+    ```
+    title = serializers.CharField(validators=[validate_title])
+    ```
+
+    -> We can also put validators on model as well
+
+
+22. user = serializers.CharField(source="user.email", read_only=True)
+
+23. Serializing Foreign key or Related Field data
+    Approach 1 -> incorrect way
+    ```
+    class ProductSerializer(serializers.ModelSerializer):
+        my_user_data = serializers.SerializerMethodField()
+        class Meta:
+            fields = ["my_user_data"]
+        
+        def get_my_user_data(self, obj):
+            return {
+                "username": obj.user.username
+            }
+    ```
+
+    Approach 2 -> Correct way
+    ```
+    class UserPublicDataSerializer(serializers.Serializer):
+        username = serializers.CharField(read_only=True)
+        email = serializers.EmailField(read_only=True)
+        id = serializers.IntegerField(read_only=True)
+    
+    class ProductSerializer(serializers.ModelSerializer):
+        user_data = UserPublicDataSerializer(read_only=True, source="user")
+        class Meta:
+            fields = ["user_data"]
+    ```
+    
+    Related Field serializing
+
+    ```
+        User = get_user_model()
+
+        class ProductSerializer(serializers.Serializer):
+            title = serializers.CharField(read_only=True)
+            id = serializers.IntegerField(read_only=True)
+
+        class UserPublicDataSerializer(serializers.ModelSerializer):
+            username = serializers.CharField(read_only=True)
+            email = serializers.EmailField(read_only=True)
+            id = serializers.IntegerField(read_only=True)
+            products = ProductSerializer(read_only=True, source="product_set.all", many=True)
+            
+            class Meta:
+                model = User
+                fields = [
+                    "username",
+                    "email",
+                    "id",
+                    "products"
+                ]
+    ```
+
+24. Pagination
