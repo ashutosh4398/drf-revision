@@ -73,3 +73,22 @@ we can although change the content type in resposne headers as:
 14. You can create a normal class with permission_classes and authentication_classes attributes and inhert
 other api views from this class to avoid duplicate code
 
+
+15. viewsets
+
+
+
+16. Generic view's serializers will always have request in context
+
+17. We can use reverse() function to generate a url from it's name instead of hardcoding the url
+    reverse('url-name', kwargs={}, request)
+
+18. We can also generate link using serializers.HyperlinkedIdentityField
+
+19. perform_create() or update() or partial_update() methods from views of generic views will call serialzier.save()
+    depending upon method calls, update() or create() methods from ModelSerializer will be performed.
+
+20. We can have additional inputs to request payload by adding new write_only field in serializer
+    And then override create() or update() method of serializer depending upon requirement
+    we rarely touch perform_create or perform_update methods of views since request instance is 
+    not directly accessible over there

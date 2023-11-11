@@ -96,7 +96,6 @@ class ProductMixinView(
     # permission_classes = [permissions.IsAuthenticated, isStaffEditiorPermission]
 
     def get(self, request, *args, **kwargs):
-        print(args, kwargs)
         if kwargs.get("id"):
             return super().retrieve(request, *args, **kwargs)
         return super().list(request, *args, **kwargs)
@@ -109,5 +108,11 @@ class ProductMixinView(
     
     def delete(self, request, *args, **kwargs):
         return super().destroy(request, *args, **kwargs)
+    
+    def perform_create(self, serializer):
+        email = serializer.validated_data.pop("email", "")
+        if email:
+            print("SEnding eMaIl")
+        return super().perform_create(serializer)
     
 

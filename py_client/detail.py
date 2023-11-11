@@ -1,4 +1,5 @@
 import requests
+import json
 from pprint import pprint
 from dataclasses import dataclass
 
@@ -31,4 +32,4 @@ get_response = requests.get(
         "Authorization": f'Bearer {auth_obj.token}'
     }
 )
-pprint(get_response.json()) # raw test response
+print(json.dumps(get_response.json()[:2], indent=4)) # raw test response
